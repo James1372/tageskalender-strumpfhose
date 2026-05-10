@@ -6,9 +6,10 @@ import { createClient } from '@/lib/supabase/client'
 
 type RawPost = { date: string; images: { storage_path: string } | null }
 
-export function FeedClient({ initialPosts, userLikes, commentCounts, userId, supabaseUrl }: {
+export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts, userId, supabaseUrl }: {
   initialPosts: RawPost[]
   userLikes: string[]
+  likeCounts: { post_date: string; count: number }[]
   commentCounts: { post_date: string; count: number }[]
   userId: string
   supabaseUrl: string
@@ -40,7 +41,8 @@ export function FeedClient({ initialPosts, userLikes, commentCounts, userId, sup
     return () => observer.disconnect()
   }, [loadMore, hasMore])
 
-  const countMap = Object.fromEntries(commentCounts.map(c => [c.post_date, Number(c.count)]))
+  const commentCountMap = Object.fromEntries(commentCounts.map(c => [c.post_date, Number(c.count)]))
+  const likeCountMap = Object.fromEntries(likeCounts.map(c => [c.post_date, Number(c.count)]))
 
   function getImageUrl(storagePath: string) {
     return `${supabaseUrl}/storage/v1/object/public/images/${storagePath}`
@@ -55,8 +57,8 @@ export function FeedClient({ initialPosts, userLikes, commentCounts, userId, sup
           post={{
             date: post.date,
             imageUrl: post.images ? getImageUrl(post.images.storage_path) : '',
-            likeCount: 0,
-            commentCount: countMap[post.date] ?? 0,
+            likeCount: likeCountMap[post.date] ?? 0,
+            commentCount: commentCountMap[post.date] ?? 0,
             userLiked: userLikes.includes(post.date),
           }}
           onOpenModal={setModalDate}

@@ -26,11 +26,18 @@ export function PostCard({ post, userId, onOpenModal }: {
     const newLiked = !liked
     setLiked(newLiked)
     setLikeCount(c => c + (newLiked ? 1 : -1))
-    if (newLiked) {
-      await supabase.from('likes').insert({ post_date: post.date, user_id: userId })
-    } else {
-      await supabase.from('likes').delete()
-        .eq('post_date', post.date)
+
+    const { error } = newLiked
+      ? await supabase.from('likes').insert({ post_date: post.date, user_id: userId })
+      : await supabase.from('likes').delete()
+          .eq('post_date', post.date)
+          .eq('user_id', userId)
+
+    if (error) {
+      // Rollback optimistic update
+      setLiked(!newLiked)
+      setLikeCount(c => c + (newLiked ? -1 : 1))
+      console.error('Like error:', error.message)
     }
   }
 

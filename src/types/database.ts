@@ -316,7 +316,21 @@ export type Database = {
           post_date: string
         }[]
       }
+      get_like_counts: {
+        Args: never
+        Returns: {
+          count: number
+          post_date: string
+        }[]
+      }
+      get_user_likes: {
+        Args: { user_uuid: string }
+        Returns: {
+          post_date: string
+        }[]
+      }
       has_active_access: { Args: { user_uuid: string }; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

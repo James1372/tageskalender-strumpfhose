@@ -19,16 +19,22 @@ export default async function FeedPage() {
     .order('date', { ascending: false })
     .limit(10)
 
-  const { data: likes } = await supabase
-    .from('likes').select('post_date').eq('user_id', user!.id)
-
   const admin = createAdminClient()
-  const { data: commentCounts } = await admin.rpc('get_comment_counts')
+  const [
+    { data: likesData },
+    { data: likeCounts },
+    { data: commentCounts },
+  ] = await Promise.all([
+    admin.rpc('get_user_likes', { user_uuid: user!.id }),
+    admin.rpc('get_like_counts'),
+    admin.rpc('get_comment_counts'),
+  ])
 
   return (
     <FeedClient
       initialPosts={(posts ?? []) as any}
-      userLikes={likes?.map(l => l.post_date) ?? []}
+      userLikes={(likesData ?? []).map(l => l.post_date)}
+      likeCounts={likeCounts ?? []}
       commentCounts={commentCounts ?? []}
       userId={user!.id}
       supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
