@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import { Heart, MessageCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { InlineComments } from './InlineComments'
 
 type Post = {
   date: string
@@ -20,6 +21,8 @@ export function PostCard({ post, userId, onOpenModal }: {
 }) {
   const [liked, setLiked] = useState(post.userLiked)
   const [likeCount, setLikeCount] = useState(post.likeCount)
+  const [commentCount, setCommentCount] = useState(post.commentCount)
+  const [showComments, setShowComments] = useState(false)
   const supabase = createClient()
 
   async function toggleLike() {
@@ -34,7 +37,6 @@ export function PostCard({ post, userId, onOpenModal }: {
           .eq('user_id', userId)
 
     if (error) {
-      // Rollback optimistic update
       setLiked(!newLiked)
       setLikeCount(c => c + (newLiked ? -1 : 1))
       console.error('Like error:', error.message)
@@ -43,6 +45,7 @@ export function PostCard({ post, userId, onOpenModal }: {
 
   return (
     <article className="bg-card border border-border rounded-lg overflow-hidden mb-6" id={`post-${post.date}`}>
+      {/* Bild */}
       <div
         className="relative aspect-[4/3] cursor-zoom-in overflow-hidden"
         onClick={() => onOpenModal(post.date)}
@@ -55,11 +58,10 @@ export function PostCard({ post, userId, onOpenModal }: {
           />
         )}
       </div>
-      <div className="p-4">
-        <p className="text-sm text-muted-foreground mb-3">
-          {format(new Date(post.date), 'd. MMMM yyyy', { locale: de })}
-        </p>
-        <div className="flex items-center gap-4">
+
+      {/* Actions */}
+      <div className="px-4 pt-3 pb-3">
+        <div className="flex items-center gap-4 mb-2">
           <button
             onClick={toggleLike}
             className={`flex items-center gap-1.5 text-sm transition-colors
@@ -69,14 +71,27 @@ export function PostCard({ post, userId, onOpenModal }: {
             {likeCount}
           </button>
           <button
-            onClick={() => onOpenModal(post.date)}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+            onClick={() => setShowComments(s => !s)}
+            className={`flex items-center gap-1.5 text-sm transition-colors
+              ${showComments ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
           >
             <MessageCircle className="h-4 w-4" />
-            {post.commentCount}
+            {commentCount}
           </button>
         </div>
+        <p className="text-xs text-muted-foreground">
+          {format(new Date(post.date), 'd. MMMM yyyy', { locale: de })}
+        </p>
       </div>
+
+      {/* Inline Kommentare */}
+      {showComments && (
+        <InlineComments
+          date={post.date}
+          userId={userId}
+          onCommentAdded={() => setCommentCount(c => c + 1)}
+        />
+      )}
     </article>
   )
 }
