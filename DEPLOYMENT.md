@@ -14,8 +14,8 @@
 1. Projekt auf [supabase.com](https://supabase.com) erstellen
 2. Migrations anwenden: im Supabase SQL-Editor alle Dateien aus `supabase/migrations/` der Reihe nach ausführen
 3. Auth-Einstellungen:
-   - Site URL: `https://deine-domain.at`
-   - Redirect URLs: `https://deine-domain.at/auth/callback`
+   - Site URL: `https://bellabianca.at/daily`
+   - Redirect URLs: `https://bellabianca.at/daily/auth/callback`
 4. Admin-E-Mail setzen (SQL Editor):
    ```sql
    ALTER DATABASE postgres SET app.admin_email = 'deine@email.at';
@@ -68,7 +68,7 @@ pm2 startup  # Autostart bei Serverrestart
    ```bash
    npx ts-node scripts/seed-stripe-prices.ts
    ```
-3. Webhook-Endpoint anlegen: `https://deine-domain.at/api/stripe/webhook`
+3. Webhook-Endpoint anlegen: `https://bellabianca.at/daily/api/stripe/webhook`
    - Events: `checkout.session.completed`, `customer.subscription.updated`,
      `customer.subscription.deleted`, `invoice.payment_failed`
 4. Customer Portal in Stripe Dashboard aktivieren
@@ -80,20 +80,20 @@ pm2 startup  # Autostart bei Serverrestart
 ```nginx
 server {
     listen 443 ssl http2;
-    server_name deine-domain.at;
+    server_name bellabianca.at;
 
-    ssl_certificate     /etc/letsencrypt/live/deine-domain.at/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/deine-domain.at/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/bellabianca.at/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/bellabianca.at/privkey.pem;
 
     # Bilder direkt von nginx mit Caching ausliefern
-    location /uploads/ {
+    location /daily/uploads/ {
         alias /var/www/tageskalender-strumpfhose/public/uploads/;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
 
-    # Alles andere an Next.js
-    location / {
+    # Tageskalender unter /daily
+    location /daily {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -106,7 +106,7 @@ server {
 
 server {
     listen 80;
-    server_name deine-domain.at;
+    server_name bellabianca.at;
     return 301 https://$host$request_uri;
 }
 ```
@@ -114,7 +114,7 @@ server {
 SSL via Let's Encrypt:
 ```bash
 sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d deine-domain.at
+sudo certbot --nginx -d bellabianca.at
 ```
 
 ---
@@ -127,12 +127,12 @@ crontab -e
 
 Zeile hinzufügen (täglich um 00:00):
 ```
-0 0 * * * curl -s -X POST http://localhost:3000/api/cron/daily -H "Authorization: Bearer DEIN_CRON_SECRET" >> /var/log/tageskalender-cron.log 2>&1
+0 0 * * * curl -s -X POST http://localhost:3000/daily/api/cron/daily -H "Authorization: Bearer DEIN_CRON_SECRET" >> /var/log/tageskalender-cron.log 2>&1
 ```
 
 Cron testen:
 ```bash
-curl -s -X POST http://localhost:3000/api/cron/daily \
+curl -s -X POST http://localhost:3000/daily/api/cron/daily \
   -H "Authorization: Bearer DEIN_CRON_SECRET" | python3 -m json.tool
 ```
 
