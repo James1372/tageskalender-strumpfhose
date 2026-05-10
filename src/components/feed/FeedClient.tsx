@@ -6,13 +6,12 @@ import { createClient } from '@/lib/supabase/client'
 
 type RawPost = { date: string; images: { storage_path: string } | null }
 
-export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts, userId, supabaseUrl }: {
+export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts, userId }: {
   initialPosts: RawPost[]
   userLikes: string[]
   likeCounts: { post_date: string; count: number }[]
   commentCounts: { post_date: string; count: number }[]
   userId: string
-  supabaseUrl: string
 }) {
   const [posts, setPosts] = useState(initialPosts)
   const [hasMore, setHasMore] = useState(true)
@@ -45,7 +44,7 @@ export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts,
   const likeCountMap = Object.fromEntries(likeCounts.map(c => [c.post_date, Number(c.count)]))
 
   function getImageUrl(storagePath: string) {
-    return `${supabaseUrl}/storage/v1/object/public/images/${storagePath}`
+    return `/uploads/${storagePath}`
   }
 
   return (

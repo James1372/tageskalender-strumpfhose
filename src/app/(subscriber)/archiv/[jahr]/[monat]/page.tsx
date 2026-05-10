@@ -49,7 +49,6 @@ export default async function ArchivePage({
         likeCounts={likeCounts ?? []}
         commentCounts={commentCounts ?? []}
         userId={user!.id}
-        supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
       />
     </>
   )

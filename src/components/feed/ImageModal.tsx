@@ -35,8 +35,7 @@ export function ImageModal({ date, onClose, onNavigate }: {
 
       if (post?.images) {
         const path = (post.images as { storage_path: string }).storage_path
-        const { data } = supabase.storage.from('images').getPublicUrl(path)
-        setImageUrl(data.publicUrl)
+        setImageUrl(`/uploads/${path}`)
       }
 
       if (user) {

@@ -11,9 +11,8 @@ type Img = {
   used_date: string | null
 }
 
-export function ImagePoolClient({ images: initial, supabaseUrl, availableCount }: {
+export function ImagePoolClient({ images: initial, availableCount }: {
   images: Img[]
-  supabaseUrl: string
   availableCount: number
 }) {
   const [images, setImages] = useState(initial)
@@ -22,7 +21,7 @@ export function ImagePoolClient({ images: initial, supabaseUrl, availableCount }
   const inputRef = useRef<HTMLInputElement>(null)
 
   function getUrl(path: string) {
-    return `${supabaseUrl}/storage/v1/object/public/images/${path}`
+    return `/uploads/${path}`
   }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {

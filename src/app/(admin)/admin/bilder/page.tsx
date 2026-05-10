@@ -9,7 +9,6 @@ export default async function BilderPage() {
     .order('uploaded_at', { ascending: false })
 
   const available = (images ?? []).filter(i => i.status === 'available').length
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
   return (
     <div>
@@ -18,7 +17,6 @@ export default async function BilderPage() {
       </div>
       <ImagePoolClient
         images={images ?? []}
-        supabaseUrl={supabaseUrl}
         availableCount={available}
       />
     </div>

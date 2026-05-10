@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { writeFile, unlink, mkdir } from 'fs/promises'
+import { join, extname } from 'path'
 
 async function requireAdmin() {
   const supabase = await createClient()
@@ -13,36 +15,38 @@ async function requireAdmin() {
   return { user, admin }
 }
 
+const uploadsDir = join(process.cwd(), 'public', 'uploads')
+
 export async function POST(request: Request) {
   const auth = await requireAdmin()
   if (!auth) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { user, admin } = auth
+
+  await mkdir(uploadsDir, { recursive: true })
 
   const formData = await request.formData()
   const files = formData.getAll('files') as File[]
   const results = []
 
   for (const file of files) {
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const buffer = await file.arrayBuffer()
+    const ext = extname(file.name).toLowerCase() || '.jpg'
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`
+    const filepath = join(uploadsDir, filename)
 
-    const { error: uploadError } = await admin.storage
-      .from('images')
-      .upload(path, buffer, { contentType: file.type })
+    try {
+      const buffer = Buffer.from(await file.arrayBuffer())
+      await writeFile(filepath, buffer)
 
-    if (uploadError) {
-      results.push({ file: file.name, error: uploadError.message })
-      continue
+      const { data: img } = await admin
+        .from('images')
+        .insert({ storage_path: filename, uploaded_by: user.id })
+        .select('id')
+        .single()
+
+      results.push({ file: file.name, id: img?.id, path: filename })
+    } catch (err) {
+      results.push({ file: file.name, error: String(err) })
     }
-
-    const { data: img } = await admin
-      .from('images')
-      .insert({ storage_path: path, uploaded_by: user.id })
-      .select('id')
-      .single()
-
-    results.push({ file: file.name, id: img?.id, path })
   }
 
   return NextResponse.json({ results })
@@ -65,8 +69,12 @@ export async function DELETE(request: Request) {
   if (img.status === 'used')
     return NextResponse.json({ error: 'Cannot delete used image' }, { status: 400 })
 
-  await admin.storage.from('images').remove([img.storage_path])
-  await admin.from('images').delete().eq('id', imageId)
+  try {
+    await unlink(join(uploadsDir, img.storage_path))
+  } catch {
+    // File may already be gone — continue with DB cleanup
+  }
 
+  await admin.from('images').delete().eq('id', imageId)
   return NextResponse.json({ success: true })
 }
