@@ -309,6 +309,13 @@ export type Database = {
     }
     Functions: {
       comment_rate_ok: { Args: { user_uuid: string }; Returns: boolean }
+      get_comment_counts: {
+        Args: never
+        Returns: {
+          count: number
+          post_date: string
+        }[]
+      }
       has_active_access: { Args: { user_uuid: string }; Returns: boolean }
     }
     Enums: {
