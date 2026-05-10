@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import Image from 'next/image'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import { Heart, MessageCircle } from 'lucide-react'
@@ -38,16 +37,16 @@ export function PostCard({ post, userId, onOpenModal }: {
   return (
     <article className="bg-card border border-border rounded-lg overflow-hidden mb-6" id={`post-${post.date}`}>
       <div
-        className="relative aspect-[4/3] cursor-zoom-in"
+        className="relative aspect-[4/3] cursor-zoom-in overflow-hidden"
         onClick={() => onOpenModal(post.date)}
       >
-        <Image
-          src={post.imageUrl}
-          alt={`Beitrag vom ${post.date}`}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 640px"
-        />
+        {post.imageUrl && (
+          <img
+            src={post.imageUrl}
+            alt={`Beitrag vom ${post.date}`}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
       </div>
       <div className="p-4">
         <p className="text-sm text-muted-foreground mb-3">
