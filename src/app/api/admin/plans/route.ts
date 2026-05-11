@@ -30,11 +30,7 @@ export async function PATCH(request: Request) {
   // Only update Stripe if price changed (requires valid Stripe key)
   if (priceEur !== plan.price_eur && process.env.STRIPE_SECRET_KEY !== 'sk_test_...') {
     try {
-      // Archive old price
-      if (plan.stripe_price_id) {
-        await stripe.prices.update(plan.stripe_price_id, { active: false })
-      }
-      // Create new price
+      // Create new price (old price stays in Stripe but is no longer referenced)
       const newPrice = await stripe.prices.create({
         currency: 'eur',
         unit_amount: Math.round(priceEur * 100),
@@ -43,7 +39,7 @@ export async function PATCH(request: Request) {
       })
       newStripePrice = newPrice.id
     } catch (err: any) {
-      console.error('Stripe price update failed:', err?.message, err?.raw?.message, JSON.stringify(err?.raw))
+      console.error('Stripe price update failed:', err?.message)
       return NextResponse.json({ error: 'Stripe sync failed' }, { status: 500 })
     }
   }
