@@ -2,29 +2,41 @@
 // Run once to create Stripe prices for each subscription plan.
 // Usage: set -a && source .env.local && set +a && npx tsx scripts/seed-stripe-prices.ts
 import Stripe from 'stripe'
-import { createClient } from '@supabase/supabase-js'
-import ws from 'ws'
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+const headers = {
+  apikey: SERVICE_KEY,
+  Authorization: `Bearer ${SERVICE_KEY}`,
+  'Content-Type': 'application/json',
+}
+
+async function sbFetch(path: string, init?: RequestInit) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, { ...init, headers: { ...headers, ...init?.headers } })
+  if (!res.ok) throw new Error(`Supabase error ${res.status}: ${await res.text()}`)
+  return res.json()
+}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { realtime: { transport: ws } }
-)
 
 async function main() {
-  const { data: plans } = await supabase.from('subscription_plans').select('*')
-  for (const plan of plans ?? []) {
+  const plans: any[] = await sbFetch('/subscription_plans?select=*')
+  console.log(`Found ${plans.length} plans`)
+
+  for (const plan of plans) {
     const price = await stripe.prices.create({
       currency: 'eur',
       unit_amount: Math.round(plan.price_eur * 100),
       recurring: { interval: 'month', interval_count: plan.duration_months },
       product_data: { name: `Bella Bianca — ${plan.label}` },
     })
-    await supabase.from('subscription_plans')
-      .update({ stripe_price_id: price.id })
-      .eq('id', plan.id)
-    console.log(`Created price for ${plan.label}: ${price.id}`)
+    await sbFetch(`/subscription_plans?id=eq.${plan.id}`, {
+      method: 'PATCH',
+      headers: { Prefer: 'return=minimal' },
+      body: JSON.stringify({ stripe_price_id: price.id }),
+    })
+    console.log(`✓ ${plan.label}: ${price.id}`)
   }
   console.log('Done!')
 }
