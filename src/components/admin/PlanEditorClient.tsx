@@ -25,7 +25,7 @@ export function PlanEditorClient({ plans: initial }: { plans: Plan[] }) {
 
   async function save(plan: Plan) {
     setSaving(plan.id)
-    const res = await fetch('/api/admin/plans', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/admin/plans`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

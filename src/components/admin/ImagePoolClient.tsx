@@ -33,7 +33,7 @@ export function ImagePoolClient({ images: initial, availableCount }: {
     const fd = new FormData()
     Array.from(files).forEach(f => fd.append('files', f))
 
-    const res = await fetch('/api/admin/images', { method: 'POST', body: fd })
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/admin/images`, { method: 'POST', body: fd })
     const { results } = await res.json()
     const errors = results.filter((r: any) => r.error)
 
@@ -50,7 +50,7 @@ export function ImagePoolClient({ images: initial, availableCount }: {
 
   async function handleDelete(imageId: string) {
     if (!confirm('Bild wirklich löschen?')) return
-    const res = await fetch('/api/admin/images', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/admin/images`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ imageId }),
