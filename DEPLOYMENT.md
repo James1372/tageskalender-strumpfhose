@@ -18,8 +18,9 @@
    - Redirect URLs: `https://bellabianca.at/daily/auth/callback`
 4. Admin-E-Mail setzen (SQL Editor):
    ```sql
-   ALTER DATABASE postgres SET app.admin_email = 'deine@email.at';
+   UPDATE public.app_settings SET value = 'deine@email.at' WHERE key = 'admin_email';
    ```
+   > Migration 8 legt die `app_settings`-Tabelle an. Kein Superuser nötig.
 
 ---
 
