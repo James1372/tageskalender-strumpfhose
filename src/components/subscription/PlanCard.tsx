@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { apiUrl } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import type { Database } from '@/types/database'
 
 type Plan = Database['public']['Tables']['subscription_plans']['Row']
@@ -28,12 +27,10 @@ export function PlanCard({ plan }: { plan: Plan }) {
   return (
     <Card className={`relative ${plan.is_featured ? 'border-gold' : ''}`}>
       {plan.is_featured && (
-        <Badge
-          className="absolute -top-3 left-1/2 -translate-x-1/2 font-semibold"
-          style={{ background: '#c9a96e', color: '#000', border: 'none' }}
-        >
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-bold tracking-wide whitespace-nowrap"
+          style={{ background: '#c9a96e', color: '#000000' }}>
           Beliebt
-        </Badge>
+        </span>
       )}
       <CardHeader>
         <CardTitle className={`text-lg ${plan.is_featured ? 'text-gold' : ''}`}>
