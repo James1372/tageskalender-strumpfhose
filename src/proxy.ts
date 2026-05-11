@@ -30,21 +30,29 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Fetch profile once for both admin and subscriber checks
+  let role: string | null = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles').select('role').eq('id', user.id).single()
+    role = profile?.role ?? null
+  }
+
   // Admin routes: must be admin role
   if (pathname.startsWith('/admin')) {
     if (!user) return redirect('/login')
-    const { data: profile } = await supabase
-      .from('profiles').select('role').eq('id', user.id).single()
-    if (profile?.role !== 'admin') return redirect('/feed')
+    if (role !== 'admin') return redirect('/feed')
   }
 
-  // Subscriber routes: must have active access
+  // Subscriber routes: must have active access (admins bypass)
   const subscriberRoutes = ['/feed', '/kalender', '/archiv', '/beitrag']
   if (subscriberRoutes.some(r => pathname.startsWith(r))) {
     if (!user) return redirect('/login')
-    const { data: hasAccess } = await supabase
-      .rpc('has_active_access', { user_uuid: user.id })
-    if (!hasAccess) return redirect('/subscribe')
+    if (role !== 'admin') {
+      const { data: hasAccess } = await supabase
+        .rpc('has_active_access', { user_uuid: user.id })
+      if (!hasAccess) return redirect('/subscribe')
+    }
   }
 
   return supabaseResponse

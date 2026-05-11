@@ -20,9 +20,11 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) { setError(error.message); setLoading(false); return }
-    router.push('/feed')
+    const { data: profile } = await supabase
+      .from('profiles').select('role').eq('id', data.user.id).single()
+    router.push(profile?.role === 'admin' ? '/admin/bilder' : '/feed')
     router.refresh()
   }
 
