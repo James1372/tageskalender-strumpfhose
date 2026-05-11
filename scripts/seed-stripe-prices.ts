@@ -15,7 +15,8 @@ const headers = {
 async function sbFetch(path: string, init?: RequestInit) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, { ...init, headers: { ...headers, ...init?.headers } })
   if (!res.ok) throw new Error(`Supabase error ${res.status}: ${await res.text()}`)
-  return res.json()
+  const text = await res.text()
+  return text ? JSON.parse(text) : null
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
