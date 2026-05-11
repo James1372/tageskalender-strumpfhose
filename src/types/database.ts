@@ -208,6 +208,7 @@ export type Database = {
           id: string
           role: string
           stripe_customer_id: string | null
+          username: string | null
         }
         Insert: {
           created_at?: string
@@ -215,6 +216,7 @@ export type Database = {
           id: string
           role?: string
           stripe_customer_id?: string | null
+          username?: string | null
         }
         Update: {
           created_at?: string
@@ -222,6 +224,7 @@ export type Database = {
           id?: string
           role?: string
           stripe_customer_id?: string | null
+          username?: string | null
         }
         Relationships: []
       }
