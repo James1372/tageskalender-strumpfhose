@@ -1,7 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
 import { apiUrl } from '@/lib/api'
-import Image from 'next/image'
 import { Trash2, Upload, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -22,30 +21,34 @@ export function ImagePoolClient({ images: initial, availableCount }: {
   const inputRef = useRef<HTMLInputElement>(null)
 
   function getUrl(path: string) {
-    return `/uploads/${path}`
+    return apiUrl(`/uploads/${path}`)
   }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files
-    if (!files?.length) return
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+
     setUploading(true)
-    setUploadProgress(`Lade ${files.length} Bild${files.length > 1 ? 'er' : ''} hoch...`)
+    const errors: string[] = []
 
-    const fd = new FormData()
-    Array.from(files).forEach(f => fd.append('files', f))
-
-    const res = await fetch(apiUrl('/api/admin/images'), { method: 'POST', body: fd })
-    const { results } = await res.json()
-    const errors = results.filter((r: any) => r.error)
+    for (let i = 0; i < files.length; i++) {
+      setUploadProgress(`${i + 1} / ${files.length} Bilder`)
+      const fd = new FormData()
+      fd.append('files', files[i])
+      try {
+        const res = await fetch(apiUrl('/api/admin/images'), { method: 'POST', body: fd })
+        const { results } = await res.json()
+        if (results[0]?.error) errors.push(`${files[i].name}: ${results[0].error}`)
+      } catch (err) {
+        errors.push(`${files[i].name}: Upload fehlgeschlagen`)
+      }
+    }
 
     setUploading(false)
     setUploadProgress(null)
     if (inputRef.current) inputRef.current.value = ''
 
-    if (errors.length > 0) {
-      alert(`${errors.length} Fehler beim Upload: ${errors.map((e: any) => e.error).join(', ')}`)
-    }
-    // Reload to show new images
+    if (errors.length > 0) alert(errors.join('\n'))
     window.location.reload()
   }
 
@@ -89,7 +92,12 @@ export function ImagePoolClient({ images: initial, availableCount }: {
           <div className="w-2.5 h-2.5 rounded-full bg-gray-500" />
           <span className="text-sm text-muted-foreground">{used} verwendet</span>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          {uploadProgress && (
+            <span className="text-sm text-muted-foreground">
+              Hochgeladen: {uploadProgress}
+            </span>
+          )}
           <input
             ref={inputRef}
             type="file"
@@ -100,7 +108,7 @@ export function ImagePoolClient({ images: initial, availableCount }: {
           />
           <Button onClick={() => inputRef.current?.click()} disabled={uploading}>
             <Upload className="h-4 w-4 mr-2" />
-            {uploadProgress ?? 'Bilder hochladen'}
+            {uploading ? 'Lädt hoch...' : 'Bilder hochladen'}
           </Button>
         </div>
       </div>
@@ -117,25 +125,21 @@ export function ImagePoolClient({ images: initial, availableCount }: {
             key={img.id}
             className="relative group aspect-square bg-card border border-border rounded-lg overflow-hidden"
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={getUrl(img.storage_path)}
               alt=""
-              fill
-              className="object-cover"
-              sizes="150px"
+              className="w-full h-full object-cover"
             />
-            {/* Status indicator */}
             <div className={`absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full
               ${img.status === 'available' ? 'bg-green-400' : 'bg-gray-500'}`}
             />
-            {/* Used date */}
             {img.used_date && (
               <div className="absolute bottom-0 inset-x-0 bg-black/70 text-xs
                 text-center py-0.5 text-gray-300">
                 {img.used_date}
               </div>
             )}
-            {/* Delete button (available only) */}
             {img.status === 'available' && (
               <button
                 onClick={() => handleDelete(img.id)}
