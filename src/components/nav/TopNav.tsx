@@ -1,10 +1,13 @@
 'use client'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export function TopNav({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
+export function TopNav({ isLoggedIn = false, isAdmin = false }: {
+  isLoggedIn?: boolean
+  isAdmin?: boolean
+}) {
   const { theme, setTheme } = useTheme()
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
@@ -18,9 +21,19 @@ export function TopNav({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           {isLoggedIn ? (
-            <Link href="/feed">
-              <Button variant="outline" size="sm">Zum Feed</Button>
-            </Link>
+            <>
+              {isAdmin && (
+                <Link href="/admin/bilder">
+                  <Button variant="outline" size="sm" className="gap-1.5">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
+              <Link href="/feed">
+                <Button variant="outline" size="sm">Zum Feed</Button>
+              </Link>
+            </>
           ) : (
             <>
               <Link href="/login">
