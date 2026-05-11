@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { apiUrl } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -12,7 +13,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
 
   async function handleCheckout() {
     setLoading(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/stripe/checkout`, {
+    const res = await fetch(apiUrl('/api/stripe/checkout'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ planId: plan.id }),

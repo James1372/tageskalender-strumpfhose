@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { apiUrl } from '@/lib/api'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -25,7 +26,7 @@ export function PlanEditorClient({ plans: initial }: { plans: Plan[] }) {
 
   async function save(plan: Plan) {
     setSaving(plan.id)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/admin/plans`, {
+    const res = await fetch(apiUrl('/api/admin/plans'), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { apiUrl } from '@/lib/api'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -48,7 +49,7 @@ export function UserTableClient({ users }: { users: User[] }) {
   async function grantCredit(userId: string) {
     if (!creditValue || isNaN(parseFloat(creditValue))) return
     setSaving(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/admin/credits`, {
+    const res = await fetch(apiUrl('/api/admin/credits'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
