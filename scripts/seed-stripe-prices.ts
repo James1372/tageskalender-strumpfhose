@@ -1,13 +1,15 @@
 // scripts/seed-stripe-prices.ts
 // Run once to create Stripe prices for each subscription plan.
-// Usage: npx ts-node --project tsconfig.json scripts/seed-stripe-prices.ts
+// Usage: set -a && source .env.local && set +a && npx tsx scripts/seed-stripe-prices.ts
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
+import ws from 'ws'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { realtime: { transport: ws } }
 )
 
 async function main() {
