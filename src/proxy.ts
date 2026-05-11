@@ -24,22 +24,27 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const { pathname } = request.nextUrl
 
+  const redirect = (path: string) => {
+    const url = request.nextUrl.clone()
+    url.pathname = path
+    return NextResponse.redirect(url)
+  }
+
   // Admin routes: must be admin role
   if (pathname.startsWith('/admin')) {
-    if (!user) return NextResponse.redirect(new URL('/login', request.url))
+    if (!user) return redirect('/login')
     const { data: profile } = await supabase
       .from('profiles').select('role').eq('id', user.id).single()
-    if (profile?.role !== 'admin')
-      return NextResponse.redirect(new URL('/feed', request.url))
+    if (profile?.role !== 'admin') return redirect('/feed')
   }
 
   // Subscriber routes: must have active access
   const subscriberRoutes = ['/feed', '/kalender', '/archiv', '/beitrag']
   if (subscriberRoutes.some(r => pathname.startsWith(r))) {
-    if (!user) return NextResponse.redirect(new URL('/login', request.url))
+    if (!user) return redirect('/login')
     const { data: hasAccess } = await supabase
       .rpc('has_active_access', { user_uuid: user.id })
-    if (!hasAccess) return NextResponse.redirect(new URL('/subscribe', request.url))
+    if (!hasAccess) return redirect('/subscribe')
   }
 
   return supabaseResponse
