@@ -42,8 +42,8 @@ export async function PATCH(request: Request) {
         product_data: { name: `Bella Bianca — ${plan.label}` },
       })
       newStripePrice = newPrice.id
-    } catch (err) {
-      console.error('Stripe price update failed:', err)
+    } catch (err: any) {
+      console.error('Stripe price update failed:', err?.message, err?.raw?.message, JSON.stringify(err?.raw))
       return NextResponse.json({ error: 'Stripe sync failed' }, { status: 500 })
     }
   }
