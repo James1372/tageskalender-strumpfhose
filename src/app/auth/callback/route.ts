@@ -5,9 +5,10 @@ import { cookies } from 'next/headers'
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
+  const next = searchParams.get('next') ?? '/feed'
   const cookieStore = await cookies()
 
-  const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/feed`)
+  const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}${next}`)
 
   if (code) {
     const supabase = createServerClient(

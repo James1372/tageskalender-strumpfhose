@@ -1,16 +1,13 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export default function RegisterPage() {
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
+export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
@@ -23,29 +20,17 @@ export default function RegisterPage() {
     if (password !== confirm) { setError('Passwörter stimmen nicht überein.'); return }
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signUp({
-      email, password,
-      options: {
-        data: { username },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-      },
-    })
+    const { error } = await supabase.auth.updateUser({ password })
     if (error) { setError(error.message); setLoading(false); return }
-    router.push('/subscribe')
+    router.push('/feed')
   }
 
   return (
     <Card>
-      <CardHeader><CardTitle>Registrieren</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Neues Passwort</CardTitle></CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div><Label>Benutzername</Label>
-            <Input value={username} onChange={e => setUsername(e.target.value)} required />
-          </div>
-          <div><Label>E-Mail</Label>
-            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-          </div>
-          <div><Label>Passwort</Label>
+          <div><Label>Neues Passwort</Label>
             <Input type="password" value={password} onChange={e => setPassword(e.target.value)}
               minLength={8} required />
           </div>
@@ -55,12 +40,8 @@ export default function RegisterPage() {
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" className="w-full bg-gold text-black hover:bg-gold/90" disabled={loading}>
-            {loading ? 'Einen Moment...' : 'Konto erstellen'}
+            {loading ? 'Einen Moment...' : 'Passwort speichern'}
           </Button>
-          <p className="text-center text-sm text-muted-foreground">
-            Bereits registriert?{' '}
-            <Link href="/login" className="text-gold underline">Einloggen</Link>
-          </p>
         </form>
       </CardContent>
     </Card>

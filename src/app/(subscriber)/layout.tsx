@@ -6,15 +6,17 @@ export default async function SubscriberLayout({ children }: { children: React.R
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   let isAdmin = false
+  let displayName: string | undefined
   if (user) {
     const { data: profile } = await supabase
-      .from('profiles').select('role').eq('id', user.id).single()
+      .from('profiles').select('role, username').eq('id', user.id).single()
     isAdmin = profile?.role === 'admin'
+    displayName = profile?.username || user.email?.split('@')[0]
   }
 
   return (
     <>
-      <TopNav isLoggedIn isAdmin={isAdmin} />
+      <TopNav isLoggedIn isAdmin={isAdmin} displayName={displayName} />
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex gap-8">
           <main className="flex-1 min-w-0">{children}</main>
