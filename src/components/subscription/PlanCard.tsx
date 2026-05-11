@@ -12,7 +12,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
 
   async function handleCheckout() {
     setLoading(true)
-    const res = await fetch('/api/stripe/checkout', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/stripe/checkout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ planId: plan.id }),

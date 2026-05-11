@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { createClient } from '@/lib/supabase/server'
 import { PlanCard } from '@/components/subscription/PlanCard'
 import { TopNav } from '@/components/nav/TopNav'
