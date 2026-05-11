@@ -44,7 +44,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
           </span>
           <span className="text-muted-foreground text-sm"> /Monat</span>
           {plan.discount_pct > 0 && (
-            <Badge variant="secondary" className="ml-2">−{plan.discount_pct}%</Badge>
+            <span className="ml-2 px-2 py-0.5 rounded text-xs font-semibold bg-muted text-muted-foreground">−{plan.discount_pct}%</span>
           )}
         </div>
         {plan.duration_months > 1 && (
