@@ -8,5 +8,5 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     await supabase.auth.exchangeCodeForSession(code)
   }
-  return NextResponse.redirect(`${origin}/feed`)
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/feed`)
 }
