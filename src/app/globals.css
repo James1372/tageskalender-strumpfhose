@@ -139,3 +139,9 @@
     font-family: var(--font-playfair);
   }
 }
+
+.badge-featured {
+  background-color: #c9a96e !important;
+  color: #000000 !important;
+  border: none !important;
+}

@@ -5,15 +5,20 @@ import { PlanCard } from '@/components/subscription/PlanCard'
 import { TopNav } from '@/components/nav/TopNav'
 import { MailCheck } from 'lucide-react'
 
-export default async function SubscribePage() {
+export default async function SubscribePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ confirm?: string }>
+}) {
   const supabase = await createClient()
+  const params = await searchParams
 
   const [{ data: { user } }, { data: plans }] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from('subscription_plans').select('*').eq('active', true).order('duration_months'),
   ])
 
-  const emailUnconfirmed = user && !user.email_confirmed_at
+  const emailUnconfirmed = params.confirm === '1'
 
   let displayName: string | undefined
   if (user) {

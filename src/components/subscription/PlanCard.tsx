@@ -27,8 +27,7 @@ export function PlanCard({ plan }: { plan: Plan }) {
   return (
     <Card className={`relative ${plan.is_featured ? 'border-gold' : ''}`}>
       {plan.is_featured && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-bold tracking-wide whitespace-nowrap"
-          style={{ background: '#c9a96e', color: '#000000' }}>
+        <span className="badge-featured absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-xs font-bold tracking-wide whitespace-nowrap">
           Beliebt
         </span>
       )}
