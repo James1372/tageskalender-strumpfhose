@@ -14,7 +14,6 @@ export default async function UserPage() {
       subscriptions(status, current_period_end),
       credits!credits_user_id_fkey(type, value, used, expires_at)
     `)
-    .eq('role', 'user')
     .order('created_at', { ascending: false })
 
   return (

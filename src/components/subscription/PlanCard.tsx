@@ -28,7 +28,10 @@ export function PlanCard({ plan }: { plan: Plan }) {
   return (
     <Card className={`relative ${plan.is_featured ? 'border-gold' : ''}`}>
       {plan.is_featured && (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-black">
+        <Badge
+          className="absolute -top-3 left-1/2 -translate-x-1/2 font-semibold"
+          style={{ background: '#c9a96e', color: '#000', border: 'none' }}
+        >
           Beliebt
         </Badge>
       )}
