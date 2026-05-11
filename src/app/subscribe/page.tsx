@@ -39,7 +39,7 @@ export default async function SubscribePage({
             <div>
               <p className="font-medium text-sm">Bitte bestätige deine E-Mail-Adresse</p>
               <p className="text-sm opacity-80 mt-0.5">
-                Wir haben eine Bestätigungs-Mail an <strong>{user.email}</strong> gesendet.
+                Wir haben eine Bestätigungs-Mail an <strong>{user?.email}</strong> gesendet.
                 Bitte klicke auf den Link in der Mail bevor du ein Abo abschließt.
               </p>
             </div>
