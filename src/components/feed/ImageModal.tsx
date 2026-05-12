@@ -87,15 +87,15 @@ export function ImageModal({ date, onClose, onNavigate }: {
     if (!el) return
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault()
-      setScale(prev => {
-        const next = Math.min(5, Math.max(1, prev - e.deltaY * 0.001 * prev))
-        if (next === 1) setPan({ x: 0, y: 0 })
-        return next
-      })
+      setScale(prev => Math.min(5, Math.max(1, prev - e.deltaY * 0.001 * prev)))
     }
     el.addEventListener('wheel', handleWheel, { passive: false })
     return () => el.removeEventListener('wheel', handleWheel)
   }, [])
+
+  useEffect(() => {
+    if (scale === 1) setPan({ x: 0, y: 0 })
+  }, [scale])
 
   function handleMouseDown(e: React.MouseEvent) {
     if (scale <= 1) return
@@ -188,20 +188,13 @@ export function ImageModal({ date, onClose, onNavigate }: {
         )}
 
         {imageUrl && (
-          <>
-            {scale === 1 && (
-              <img
-                src={imageUrl}
-                alt={`Beitrag vom ${date}`}
-                className="absolute inset-0 w-full h-full object-contain"
-                draggable={false}
-              />
-            )}
-            {scale > 1 && (
-              <img
-                src={imageUrl}
-                alt={`Beitrag vom ${date}`}
-                style={{
+          <img
+            src={imageUrl}
+            alt={`Beitrag vom ${date}`}
+            draggable={false}
+            style={scale === 1
+              ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }
+              : {
                   position: 'absolute',
                   top: '50%',
                   left: '50%',
@@ -209,11 +202,9 @@ export function ImageModal({ date, onClose, onNavigate }: {
                   maxWidth: 'none',
                   width: 'auto',
                   height: 'auto',
-                }}
-                draggable={false}
-              />
-            )}
-          </>
+                }
+            }
+          />
         )}
       </div>
 
