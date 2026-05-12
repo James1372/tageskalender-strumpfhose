@@ -20,7 +20,7 @@ export default async function SubscriberLayout({ children }: { children: React.R
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex gap-8">
           <main className="flex-1 min-w-0">{children}</main>
-          <aside className="w-72 shrink-0 hidden lg:block">
+          <aside className="w-72 shrink-0 hidden lg:block sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto">
             <Sidebar />
           </aside>
         </div>
