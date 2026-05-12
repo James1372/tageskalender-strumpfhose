@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tageskalender Strumpfhose
 
-## Getting Started
+Täglich ein exklusives Bild — nur für Abonnenten. Betrieben unter [bellabianca.at/daily](https://bellabianca.at/daily).
 
-First, run the development server:
+## Stack
+
+- **Next.js** (App Router) — Server-Side Rendering, `basePath: '/daily'`
+- **Supabase Cloud** — PostgreSQL + Auth
+- **Stripe** — Abo-Zahlungen (9,99 €/Monat)
+- **pm2** auf World4You vServer
+- **Bilder** lokal unter `public/uploads/` (~985 Bilder, 4,8 GB)
+- **Cron** via Linux `crontab` → POST `/daily/api/cron/daily`
+
+## Features
+
+- Tägliches Bild aus dem Bildpool (zufällig, Cron um Mitternacht)
+- Feed mit Infinite Scroll, Sticky Sidebar (Kalender + Archiv)
+- Vollbild-Lightbox mit Mausrad-Zoom (1×–5×) und Pan
+- Likes & Kommentare (nur für eingeloggte Abonnenten)
+- Admin-Bereich: Bildpool verwalten, Abos & User einsehen
+- Stripe Webhook für Abo-Verwaltung
+
+## Lokale Entwicklung
 
 ```bash
+npm install
+cp .env.example .env.local   # Supabase + Stripe Keys eintragen
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App läuft auf [http://localhost:3000](http://localhost:3000) — ohne `basePath`, da nur lokal.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Siehe [DEPLOYMENT.md](./DEPLOYMENT.md) für die vollständige Anleitung.
 
-## Learn More
+## Tests
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm test          # Jest Unit Tests
+npm run test:e2e  # Playwright E2E (braucht laufende App)
+```

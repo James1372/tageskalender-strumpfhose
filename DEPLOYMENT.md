@@ -126,10 +126,12 @@ sudo certbot --nginx -d bellabianca.at
 crontab -e
 ```
 
-Zeile hinzufügen (täglich um 00:00):
+Zeile hinzufügen (täglich um 00:02 UTC = 02:02 Wien-Zeit):
 ```
-0 0 * * * curl -s -X POST http://localhost:3000/daily/api/cron/daily -H "Authorization: Bearer DEIN_CRON_SECRET" >> /var/log/tageskalender-cron.log 2>&1
+2 0 * * * curl -s -X POST http://localhost:3000/daily/api/cron/daily -H "Authorization: Bearer DEIN_CRON_SECRET" >> /var/log/tageskalender-cron.log 2>&1
 ```
+
+> Die API berechnet das Datum in der Zeitzone `Europe/Vienna` — läuft also auch auf UTC-Servern korrekt.
 
 Cron testen:
 ```bash
@@ -153,11 +155,14 @@ pm2 restart tageskalender
 
 ## Smoke Test
 
-- [ ] `/` — Landing Page mit Blur-Teaser
+- [ ] `/` — Landing Page: nicht eingeloggt → Login/Abonnieren; eingeloggt → Name + Feed-Button in Nav
 - [ ] `/register` → `/subscribe` — Registrierung funktioniert
 - [ ] Stripe Checkout — Test-Karte `4242 4242 4242 4242`
-- [ ] `/feed` — Bild des Tages sichtbar
+- [ ] `/feed` — Bild des Tages sichtbar (kein broken-image-Icon)
+- [ ] Feed: Sidebar (Kalender) bleibt beim Scrollen sichtbar (sticky)
 - [ ] Like — bleibt nach Refresh erhalten
 - [ ] Kommentare — klappt inline auf
+- [ ] Vollbild: Mausrad zoomt stufenlos (kein Sprung auf Originalgröße), Pan funktioniert
+- [ ] Vollbild: Zoom-Button wechselt zwischen Fit und 2×
 - [ ] `/admin/bilder` — Bild hochladen, erscheint sofort
-- [ ] Cron-API — `POST /api/cron/daily` mit Secret liefert Erfolg
+- [ ] Cron-API — `POST /daily/api/cron/daily` mit Secret liefert Erfolg und korrektes Wien-Datum

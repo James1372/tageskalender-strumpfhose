@@ -1,32 +1,12 @@
-# daily-cron Edge Function
+# daily-cron (nicht verwendet)
 
-Runs daily at 22:00 UTC (= 00:00 CET / 01:00 CEST) to select a random image from the pool and create the daily post.
+Diese Supabase Edge Function ist ein alternativer Ansatz für den täglichen Cron-Job.
 
-## Deploy
+**Aktuell wird sie nicht eingesetzt.** Der Cron läuft stattdessen via Linux `crontab` auf dem vServer und ruft direkt die Next.js API-Route auf:
 
-```bash
-supabase functions deploy daily-cron
+```
+2 0 * * * curl -s -X POST http://localhost:3000/daily/api/cron/daily \
+  -H "Authorization: Bearer $CRON_SECRET" >> /var/log/tageskalender-cron.log 2>&1
 ```
 
-## Schedule (production)
-
-Set up the cron in Supabase Dashboard → Edge Functions → daily-cron → Schedule:
-- Cron expression: `0 22 * * *`
-
-Or via pg_cron SQL (if enabled):
-```sql
-select cron.schedule(
-  'daily-image-cron',
-  '0 22 * * *',
-  $$ select net.http_post(
-    url := 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-cron',
-    headers := '{"Authorization": "Bearer YOUR_ANON_KEY"}'::jsonb
-  ) $$
-);
-```
-
-## Environment Variables Required
-
-- `SUPABASE_URL` — auto-injected by Supabase
-- `SUPABASE_SERVICE_ROLE_KEY` — auto-injected by Supabase
-- `ADMIN_WEBHOOK_URL` (optional) — Slack/Discord webhook for error notifications
+Siehe [DEPLOYMENT.md](../../DEPLOYMENT.md#5-täglicher-cron) für Details.
