@@ -6,10 +6,9 @@ export default async function FeedPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const now = new Date()
-  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    .toISOString().split('T')[0]
-  const today = now.toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Vienna' })
+  const [y, m] = today.split('-')
+  const firstOfMonth = `${y}-${m}-01`
 
   const { data: posts } = await supabase
     .from('daily_posts')

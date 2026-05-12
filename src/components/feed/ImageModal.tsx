@@ -35,7 +35,7 @@ export function ImageModal({ date, onClose, onNavigate }: {
 
       if (post?.images) {
         const path = (post.images as { storage_path: string }).storage_path
-        setImageUrl(`/uploads/${path}`)
+        setImageUrl(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/uploads/${path}`)
       }
 
       if (user) {

@@ -44,7 +44,7 @@ export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts,
   const likeCountMap = Object.fromEntries(likeCounts.map(c => [c.post_date, Number(c.count)]))
 
   function getImageUrl(storagePath: string) {
-    return `/uploads/${storagePath}`
+    return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/uploads/${storagePath}`
   }
 
   return (

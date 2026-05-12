@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient()
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Vienna' })
 
   try {
     // Idempotency check
