@@ -192,18 +192,15 @@ export function ImageModal({ date, onClose, onNavigate }: {
             src={imageUrl}
             alt={`Beitrag vom ${date}`}
             draggable={false}
-            style={scale === 1
-              ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }
-              : {
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: `translate(calc(-50% + ${pan.x}px), calc(-50% + ${pan.y}px)) scale(${scale})`,
-                  maxWidth: 'none',
-                  width: 'auto',
-                  height: 'auto',
-                }
-            }
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
+              transformOrigin: 'center center',
+            }}
           />
         )}
       </div>
