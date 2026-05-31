@@ -47,11 +47,18 @@ export async function POST(request: Request) {
         console.error(`Thumbnail generation failed for ${filename}:`, thumbErr)
       }
 
-      const { data: img } = await admin
+      const { data: img, error: dbErr } = await admin
         .from('images')
         .insert({ storage_path: filename, uploaded_by: user.id })
         .select('id')
         .single()
+
+      if (dbErr) {
+        await unlink(filepath).catch(() => {})
+        await unlink(thumbFilepath).catch(() => {})
+        results.push({ file: file.name, error: dbErr.message })
+        continue
+      }
 
       results.push({ file: file.name, id: img?.id, path: filename })
     } catch (err) {
