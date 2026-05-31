@@ -18,6 +18,7 @@ describe('Project structure', () => {
     expect(existsSync(join(root, 'src/app/(admin)/admin/bilder/page.tsx'))).toBe(true)
     expect(existsSync(join(root, 'src/app/(admin)/admin/user/page.tsx'))).toBe(true)
     expect(existsSync(join(root, 'src/app/(admin)/admin/abos/page.tsx'))).toBe(true)
+    expect(existsSync(join(root, 'src/components/admin/SubscriptionsTableClient.tsx'))).toBe(true)
   })
 
   it('has all subscriber pages', () => {
