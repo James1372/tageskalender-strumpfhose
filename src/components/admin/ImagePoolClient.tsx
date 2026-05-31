@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import { apiUrl } from '@/lib/api'
+import { thumbPath } from '@/lib/thumb'
 import { Trash2, Upload, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -21,7 +22,7 @@ export function ImagePoolClient({ images: initial, availableCount }: {
   const inputRef = useRef<HTMLInputElement>(null)
 
   function getUrl(path: string) {
-    return apiUrl(`/uploads/${path}`)
+    return apiUrl(`/uploads/${thumbPath(path)}`)
   }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
