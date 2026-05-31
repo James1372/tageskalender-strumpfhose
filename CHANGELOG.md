@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-05-31 — Admin-Abonnenten-Übersicht
+
+### Neu
+- **`/admin/abonnenten`** — neue Seite mit Tabelle aller Abonnements (E-Mail, Plan, Preis, Dauer, Beginn, Läuft bis, Status)
+- Status-Badges farblich: Aktiv=grün, Toleranz=orange, Ausstehend=gelb, Gekündigt=grau
+- Nav-Link "Abonnenten" in der Admin-Navigation ergänzt
+
+### Entfernt
+- Abonnenten-Zahl von der Landing Page entfernt
+
+---
+
 ## 2026-05-31 — Thumbnails & natürliches Seitenverhältnis
 
 ### Neu
