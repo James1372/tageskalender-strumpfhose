@@ -24,6 +24,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <Link href="/admin/user" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           User
         </Link>
+        <Link href="/admin/abonnenten" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          Abonnenten
+        </Link>
         <Link href="/admin/abos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           Abo-Preise
         </Link>
