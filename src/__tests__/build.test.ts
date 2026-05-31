@@ -10,6 +10,7 @@ describe('Project structure', () => {
     expect(existsSync(join(root, 'src/lib/supabase/server.ts'))).toBe(true)
     expect(existsSync(join(root, 'src/lib/stripe.ts'))).toBe(true)
     expect(existsSync(join(root, 'src/proxy.ts'))).toBe(true)
+    expect(existsSync(join(root, 'src/lib/thumb.ts'))).toBe(true)
   })
 
   it('has all admin pages', () => {
