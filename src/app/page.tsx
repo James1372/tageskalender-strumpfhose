@@ -17,10 +17,6 @@ export default async function LandingPage() {
     displayName = profile?.username || user.email?.split('@')[0]
   }
 
-  const { count } = await supabase
-    .from('subscriptions').select('*', { count: 'exact', head: true })
-    .eq('status', 'active')
-
   return (
     <>
       <TopNav isLoggedIn={!!user} isAdmin={isAdmin} displayName={displayName} />
@@ -41,12 +37,6 @@ export default async function LandingPage() {
             </p>
           </div>
         </div>
-
-        {count !== null && count > 0 && (
-          <p className="text-muted-foreground text-sm mb-8">
-            Bereits {count.toLocaleString('de')} Abonnenten
-          </p>
-        )}
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {user ? (
