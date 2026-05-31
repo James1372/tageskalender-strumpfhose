@@ -4,6 +4,13 @@
 
 ---
 
+## 2026-05-31 — Admin-Dashboard klickbare Kacheln
+
+### Geändert
+- Dashboard-Kacheln sind jetzt klickbar: Bilder → `/admin/bilder`, Aktive Abos → `/admin/abonnenten`, Registrierte User → `/admin/user`
+
+---
+
 ## 2026-05-31 — Admin-Abonnenten-Übersicht
 
 ### Neu
