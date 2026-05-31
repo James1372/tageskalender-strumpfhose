@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { writeFile, unlink, mkdir } from 'fs/promises'
 import { join, extname } from 'path'
+import sharp from 'sharp'
+import { thumbPath } from '@/lib/thumb'
 
 async function requireAdmin() {
   const supabase = await createClient()
@@ -36,6 +38,14 @@ export async function POST(request: Request) {
     try {
       const buffer = Buffer.from(await file.arrayBuffer())
       await writeFile(filepath, buffer)
+
+      const thumbFilename = thumbPath(filename)
+      const thumbFilepath = join(uploadsDir, thumbFilename)
+      try {
+        await sharp(buffer).resize(600).jpeg({ quality: 80 }).toFile(thumbFilepath)
+      } catch (thumbErr) {
+        console.error(`Thumbnail generation failed for ${filename}:`, thumbErr)
+      }
 
       const { data: img } = await admin
         .from('images')
@@ -73,6 +83,12 @@ export async function DELETE(request: Request) {
     await unlink(join(uploadsDir, img.storage_path))
   } catch {
     // File may already be gone — continue with DB cleanup
+  }
+
+  try {
+    await unlink(join(uploadsDir, thumbPath(img.storage_path)))
+  } catch {
+    // Thumb may not exist — continue
   }
 
   await admin.from('images').delete().eq('id', imageId)
