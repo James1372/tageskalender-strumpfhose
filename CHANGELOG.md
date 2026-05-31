@@ -4,6 +4,13 @@
 
 ---
 
+## 2026-05-31 — Abo-Verwaltung in der Navigation
+
+### Neu
+- **Abo-Button im TopNav** für Abonnenten (nicht Admins) — Kreditkarten-Icon, auf Desktop mit "Abo"-Text. Öffnet das Stripe Customer Portal zum Kündigen, Zahlungsmethode ändern, Rechnungen einsehen. Auf allen Geräten sichtbar.
+
+---
+
 ## 2026-05-31 — Admin-Dashboard klickbare Kacheln
 
 ### Geändert
