@@ -2,9 +2,10 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { Moon, Sun, ShieldCheck, LogOut } from 'lucide-react'
+import { Moon, Sun, ShieldCheck, LogOut, CreditCard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
+import { apiUrl } from '@/lib/api'
 
 export function TopNav({ isLoggedIn = false, isAdmin = false, displayName }: {
   isLoggedIn?: boolean
@@ -19,6 +20,13 @@ export function TopNav({ isLoggedIn = false, isAdmin = false, displayName }: {
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
+  }
+
+  async function handleManageSubscription() {
+    const res = await fetch(apiUrl('/api/stripe/portal'), { method: 'POST' })
+    const { url, error } = await res.json()
+    if (url) window.location.href = url
+    else alert(error ?? 'Fehler beim Öffnen des Abo-Portals')
   }
 
   return (
@@ -50,6 +58,13 @@ export function TopNav({ isLoggedIn = false, isAdmin = false, displayName }: {
               <Link href="/feed">
                 <Button variant="outline" size="sm">Feed</Button>
               </Link>
+              {!isAdmin && (
+                <Button variant="ghost" size="sm" onClick={handleManageSubscription}
+                  className="gap-1.5" title="Abo verwalten">
+                  <CreditCard className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Abo</span>
+                </Button>
+              )}
               <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-1.5">
                 <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Abmelden</span>
