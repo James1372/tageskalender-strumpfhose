@@ -40,8 +40,8 @@ admin
 | Plan | `subscription_plans.label` | Text |
 | Preis | `subscription_plans.price_eur` | `9,99 €` |
 | Dauer | `subscription_plans.duration_months` | `3 Monate` |
-| Beginn | `subscriptions.created_at` | `d. MMM yyyy` (de) |
-| Läuft bis | `subscriptions.current_period_end` | `d. MMM yyyy` (de), `—` wenn null |
+| Beginn | `subscriptions.created_at` | `dd.MM.yyyy` |
+| Läuft bis | `subscriptions.current_period_end` | `dd.MM.yyyy`, `—` wenn null |
 | Status | `subscriptions.status` | Badge (siehe unten) |
 
 ## Status-Badges
