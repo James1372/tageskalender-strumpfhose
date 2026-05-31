@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react'
 import { PostCard } from './PostCard'
 import { ImageModal } from './ImageModal'
 import { createClient } from '@/lib/supabase/client'
+import { thumbPath } from '@/lib/thumb'
 
 type RawPost = { date: string; images: { storage_path: string } | null }
 
@@ -43,8 +44,14 @@ export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts,
   const commentCountMap = Object.fromEntries(commentCounts.map(c => [c.post_date, Number(c.count)]))
   const likeCountMap = Object.fromEntries(likeCounts.map(c => [c.post_date, Number(c.count)]))
 
+  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? ''
+
   function getImageUrl(storagePath: string) {
-    return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/uploads/${storagePath}`
+    return `${base}/uploads/${storagePath}`
+  }
+
+  function getThumbUrl(storagePath: string) {
+    return `${base}/uploads/${thumbPath(storagePath)}`
   }
 
   return (
@@ -56,6 +63,7 @@ export function FeedClient({ initialPosts, userLikes, likeCounts, commentCounts,
           post={{
             date: post.date,
             imageUrl: post.images ? getImageUrl(post.images.storage_path) : '',
+            thumbnailUrl: post.images ? getThumbUrl(post.images.storage_path) : '',
             likeCount: likeCountMap[post.date] ?? 0,
             commentCount: commentCountMap[post.date] ?? 0,
             userLiked: userLikes.includes(post.date),

@@ -9,6 +9,7 @@ import { InlineComments } from './InlineComments'
 type Post = {
   date: string
   imageUrl: string
+  thumbnailUrl: string
   likeCount: number
   commentCount: number
   userLiked: boolean
@@ -47,14 +48,15 @@ export function PostCard({ post, userId, onOpenModal }: {
     <article className="bg-card border border-border rounded-lg overflow-hidden mb-6" id={`post-${post.date}`}>
       {/* Bild */}
       <div
-        className="relative aspect-[4/3] cursor-zoom-in overflow-hidden"
+        className="cursor-zoom-in overflow-hidden"
         onClick={() => onOpenModal(post.date)}
       >
-        {post.imageUrl && (
+        {post.thumbnailUrl && (
           <img
-            src={post.imageUrl}
+            src={post.thumbnailUrl}
+            onError={e => { (e.target as HTMLImageElement).src = post.imageUrl }}
             alt={`Beitrag vom ${post.date}`}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="w-full h-auto block"
           />
         )}
       </div>
